@@ -117,18 +117,24 @@
     // Remember the table
     var that = this;
     
-    // Patch all events
-    for (var c in this.header.events)
+    // Patch all events and events
+    var overloadCallback = function (callback, index) {
+      return function () {
+        // Patch the arguments
+        arguments [index] = that.options.backboneCollection.get (arguments [index][that.options.backboneCollection.idAttribute || that.options.uniqueId || 'id']);
+        
+        // Call the initial callback
+        callback.apply (this, arguments);
+      };
+    };
+    
+    for (var c in this.header.events) {
       for (var e in this.header.events [c])
-        this.header.events [c][e] = (function (cb) {
-          return function () {
-            // Patch the arguments
-            arguments [2] = that.options.backboneCollection.get (arguments [2][that.options.backboneCollection.idAttribute || that.options.uniqueId || 'id']);
-            
-            // Call the initial callback
-            cb.apply (this, arguments);
-          };
-        })(this.header.events [c][e]);
+        this.header.events [c][e] = overloadCallback (this.header.events [c][e], 2);
+      
+      if (this.header.formatters [c])
+        this.header.formatters [c] = overloadCallback (this.header.formatters [c], 1);
+    }
   }
   
   // Hook into initServer() of bootstrap-table
