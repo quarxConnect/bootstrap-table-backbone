@@ -123,8 +123,12 @@
         // Patch the arguments
         arguments [index] = that.options.backboneCollection.get (arguments [index][that.options.backboneCollection.idAttribute || that.options.uniqueId || 'id']);
         
+        // Omit the call if no model was found
+        if (!arguments [index])
+          return;
+        
         // Call the initial callback
-        callback.apply (this, arguments);
+        return callback.apply (this, arguments);
       };
     };
     
