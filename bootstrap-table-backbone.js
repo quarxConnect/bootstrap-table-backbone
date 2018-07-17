@@ -24,7 +24,7 @@
   
   var bbOnChange = function (model) {
     // Push the model to table again
-    this.updateByUniqueId (mode.toJSON ());
+    this.updateByUniqueId (model.toJSON ());
   };
   
   var bbOnAdd = function (model, collection, options) {
