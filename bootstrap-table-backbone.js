@@ -53,6 +53,9 @@
     // Remove the active-flag
     this.bbOnRequest = false;
     
+    if (this.options.backboneCollection.idAttribute && !this.options.uniqueId)
+      this.options.uniqueId = this.options.backboneCollection.idAttribute;
+    
     // Update the table
     this.initBackbone ();
   };
@@ -75,7 +78,8 @@
       this.options.backboneCollection.on ('sync',    bbOnSync,    this);
       
       // Copy unique-id-setting
-      this.options.uniqueId = this.options.backboneCollection.model.prototype.idAttribute || 'id';
+      if (this.options.backboneCollection.idAttribute)
+        this.options.uniqueId = this.options.backboneCollection.idAttribute;
       
       // Set the request-flag to inactive
       this.bbOnRequest = false;
