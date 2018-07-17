@@ -44,6 +44,19 @@
     this.removeByUniqueId (model.id);
   };
   
+  var bbOnUpdate = function (collection, options) {
+    // Bind to change-events on added models
+    for (var model of options.changes.added)
+      model.on ('change', bbOnChange, this);
+    
+    // Unbind evnets from removed models
+    for (var model of options.changes.removed)
+      model.off ('change', bbOnChange, this);
+    
+    // Update the table
+    this.initBackbone ();
+  };
+  
   var bbOnReset = function () {
     // Update the table
     this.initBackbone ();
@@ -72,8 +85,9 @@
       // Bind our events
       this.options.backboneCollection.on ('request', bbOnRequest, this);
       this.options.backboneCollection.on ('error',   bbOnError,   this);
-      this.options.backboneCollection.on ('add',     bbOnAdd,     this);
-      this.options.backboneCollection.on ('remove',  bbOnRemove,  this);
+      // this.options.backboneCollection.on ('add',     bbOnAdd,     this);
+      // this.options.backboneCollection.on ('remove',  bbOnRemove,  this);
+      this.options.backboneCollection.on ('update',  bbOnUpdate,  this);
       this.options.backboneCollection.on ('reset',   bbOnReset,   this);
       this.options.backboneCollection.on ('sync',    bbOnSync,    this);
       
@@ -99,6 +113,7 @@
       this.options.backboneCollection.off ('error',   bbOnError,   this);
       this.options.backboneCollection.off ('add',     bbOnAdd,     this);
       this.options.backboneCollection.off ('remove',  bbOnRemove,  this);
+      this.options.backboneCollection.off ('update',  bbOnUpdate,  this);
       this.options.backboneCollection.off ('reset',   bbOnReset,   this);
       this.options.backboneCollection.off ('sync',    bbOnSync,    this);
     }
